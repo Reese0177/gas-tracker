@@ -1,9 +1,83 @@
 <?php
 include_once('./header.php');
-$state = $_GET['state'] ?? '';
+$price = trim(htmlspecialchars($_POST['price'] ?? "", ENT_QUOTES));
+$city = trim(htmlspecialchars($_POST['city'] ?? "", ENT_QUOTES));
+$location = trim(htmlspecialchars($_POST['location'] ?? "", ENT_QUOTES));
+$brand = trim(htmlspecialchars($_POST['brand'] ?? "", ENT_QUOTES));
+$state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
+if (isset($_POST['submit']) && $_POST['submit'] === "record") {
+    $formComplete = true;
+    $errors = [];
+    if (preg_match('/^\d{1,2}(\.\d{0,2})?$/', $price) === 0) {
+        $formComplete = false;
+        array_push($errors, "Please enter a valid price (format: X.XX or XX.XX)");
+    }
+    if ($city === "" || strlen($city) > 20) {
+        $formComplete = false;
+        array_push($errors, "Please enter a valid city no greater than 20 characters");
+    }
+    if ($location === "" || strlen($location) > 50) {
+        $formComplete = false;
+        array_push($errors, "Please enter a location (e.g. street address or cross streets) no greater than 50 characters");
+    }
+    if ($brand === "" || strlen($brand) > 20) {
+        $formComplete = false;
+        array_push($errors, "Please enter a brand no greater than 20 characters");
+    }
+    $statesArray = [
+        'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI',
+        'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
+        'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
+        'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    ];
+    if (!in_array($state, $statesArray)) {
+        $formComplete = false;
+        array_push($errors, "Please select a valid state");
+    }
+
+    if ($formComplete) { ?>
+        <div>
+            <p>Recorded!</p>
+        </div>
+<?php
+
+        $servername = "127.0.0.1";
+        $username = "root";
+        $password = "password";
+        $dbname = "gas-tracker";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        if ($conn->connect_error) {
+            die("SQL Connection failed: " . $conn->connect_error);
+        }
+
+        $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state) VALUES (?, ?, ?, ?, ?);");
+        $stmt->bind_param("sssss", $price, $city, $location, $brand, $state);
+        $stmt->execute();
+        $stmt->close();
+        $conn->close();
+    } else {
+        echo "<div class=\"errors\"><ul>";
+        foreach ($errors as $error) {
+            echo "<li>$error</li>";
+        }
+        echo "</ul></div>";
+    }
+}
 ?>
-<form>
+<h2>Record a Price</h2>
+<form method="post">
+    <label>Price</label>
+    <input type="text" name="price" placeholder="0.00" value="<?= $price ?>" />
+    <label>City</label>
+    <input type="text" name="city" placeholder="City" value="<?= $city ?>" />
+    <label>Location</label>
+    <input type="text" name="location" placeholder="Location" value="<?= $location ?>" />
+    <label>Brand</label>
+    <input type="text" name="brand" placeholder="Brand" value="<?= $brand ?>" />
     <select name="state">
+        <option value="">--Select a State--</option>
         <option value="AL" <?= ($state === "AL" ? "selected" : "") ?>>Alabama</option>
         <option value="AK" <?= ($state === "AK" ? "selected" : "") ?>>Alaska</option>
         <option value="AZ" <?= ($state === "AZ" ? "selected" : "") ?>>Arizona</option>
@@ -56,61 +130,6 @@ $state = $_GET['state'] ?? '';
         <option value="WI" <?= ($state === "WI" ? "selected" : "") ?>>Wisconsin</option>
         <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
     </select>
-    <button type="submit">Go</button>
+    <button type="submit" name="submit" value="record">Submit</button>
+    <a href="/?state=<?= $state ?>">Back</a>
 </form>
-<div>
-    <a href="record.php">Record a Price</a>
-</div>
-<?php
-if (isset($_GET['state'])) {
-    $state = htmlspecialchars($_GET['state'], ENT_QUOTES);
-    if (strlen(trim($state)) === 2) {
-        $servername = "127.0.0.1";
-        $username = "root";
-        $password = "password";
-        $dbname = "gas-tracker";
-
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("SQL Connection failed: " . $conn->connect_error);
-        }
-
-        $stmt = sprintf("SELECT * FROM stations WHERE state = '%s'", $conn->real_escape_string($state));
-        $stations = $conn->query($stmt);
-
-        if (mysqli_num_rows($stations) === 0) {
-            echo "<p>No stations found in $state";
-        } else {
-?>
-            <table>
-                <tr>
-                    <th>Price</th>
-                    <th>City</th>
-                    <th>Location</th>
-                    <th>Brand</th>
-                </tr>
-                <?php
-                foreach ($stations as $station) { ?>
-                    <tr>
-                        <td><?= $station['price'] ?></td>
-                        <td><?= $station['city'] ?></td>
-                        <td><?= $station['street'] ?></td>
-                        <td><?= $station['brand'] ?></td>
-                        <td>
-                            <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
-                                <input type="hidden" name="price" value="<?= $station['price'] ?>" />
-                                <input type="hidden" name="city" value="<?= $station['city'] ?>" />
-                                <input type="hidden" name="location" value="<?= $station['street'] ?>" />
-                                <input type="hidden" name="brand" value="<?= $station['brand'] ?>" />
-                                <input type="hidden" name="state" value="<?= $station['state'] ?>" />
-                                <button type="submit" name="submit" value="edit">Edit</button>
-                            </form>
-                        </td>
-                    </tr>
-    <?php }
-                echo "</table>";
-            }
-            $conn->close();
-        }
-    }
