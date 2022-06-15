@@ -52,7 +52,7 @@ table {
     margin: 1vh 1vw;
 }
 
-a{
+.button{
     color: blanchedalmond;
     font-weight: 500;
     background-color: indianred;
@@ -61,7 +61,7 @@ a{
     text-decoration: none;
 }
 
-a:hover {
+.button:hover {
     background-image: linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.1));
 }
 
@@ -108,4 +108,9 @@ button:hover{
     font-weight: 400;
     padding: .5vh .5vw;
     border-radius: .5em;
+}
+
+#header-link {
+    text-decoration: none;
+    color: inherit;
 }

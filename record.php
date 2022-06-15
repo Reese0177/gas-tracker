@@ -127,5 +127,5 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
         <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
     </select>
     <button type="submit" name="submit" value="record">Submit</button>
-    <a class="back-button" href="/?state=<?= $state ?>">Back</a>
+    <a class="button back-button" href="/?state=<?= $state ?>">Back</a>
 </form>

@@ -80,7 +80,7 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
     <?php } ?>
 </div>
 <div id="record">
-    <a href="record.php">Record a Price</a>
+    <a class="button" href="record.php">Record a Price</a>
 </div>
 <?php
 if (isset($_GET['state']) && in_array($state, $statesArray)) {

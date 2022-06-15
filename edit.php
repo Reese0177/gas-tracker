@@ -20,7 +20,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     $stmt->execute();
     $stmt->close();
     $conn->close();
-    echo "<p>Deleted!</p><a href='/index.php?state=$state'>Back</a>";
+    echo "<p>Deleted!</p><a class='button' href='/index.php?state=$state'>Back</a>";
 } else {
 
     $price = trim(htmlspecialchars($_POST['price'] ?? "", ENT_QUOTES));
@@ -150,7 +150,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
             <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
         </select>
         <button type="submit" name="submit" value="update">Submit</button>
-        <a class="back-button" href="/?state=<?= $state ?>">Back</a>
+        <a class="button back-button" href="/?state=<?= $state ?>">Back</a>
     </form>
     <p>WARNING: The following button will PERMANENTLY DELETE this record.</p>
     <form method="post">

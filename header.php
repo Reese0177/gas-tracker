@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="/style.css"/>
 </head>
 <header>
-    <h1>Gas Tracker</h1>
+    <h1><a id="header-link" href="/">Gas Tracker</a></h1>
 </header>
 <?php
 $statesArray = [
