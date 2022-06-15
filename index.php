@@ -4,7 +4,7 @@ $state = htmlspecialchars($_GET['state'] ?? '', ENT_QUOTES);
 $search = htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES);
 $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
 ?>
-<div>
+<div id="searches">
     <form>
         <select name="state">
             <option value="">--Select a State--</option>
@@ -79,7 +79,7 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
         </form>
     <?php } ?>
 </div>
-<div>
+<div id="record">
     <a href="record.php">Record a Price</a>
 </div>
 <?php
@@ -119,7 +119,7 @@ if (isset($_GET['state']) && in_array($state, $statesArray)) {
                     <td><?= $station['city'] ?></td>
                     <td><?= $station['street'] ?></td>
                     <td><?= $station['brand'] ?></td>
-                    <td>
+                    <td class="edit-td">
                         <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
                             <input type="hidden" name="price" value="<?= $station['price'] ?>" />
                             <input type="hidden" name="city" value="<?= $station['city'] ?>" />
@@ -134,4 +134,6 @@ if (isset($_GET['state']) && in_array($state, $statesArray)) {
             echo "</table>";
         }
         $conn->close();
+    } else {
+        echo "<p>Select a state to view recorded prices.</p>";
     }
