@@ -1,5 +1,6 @@
 <?php
 include_once('./header.php');
+echo "<h2>Edit a Record</h2>";
 $state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
 if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     $id = trim(htmlspecialchars($_POST['id'] ?? "", ENT_QUOTES));
@@ -85,8 +86,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     }
     ?>
 
-    <h2>Record a Price</h2>
-    <form method="post">
+    <form class="entry-form" method="post">
         <label>Price</label>
         <input type="text" name="price" placeholder="0.00" value="<?= $price ?>" />
         <label>City</label>
@@ -150,13 +150,12 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
             <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
         </select>
         <button type="submit" name="submit" value="update">Submit</button>
-        <a href="/?state=<?= $state ?>">Back</a>
-        <br />
-        <p>WARNING: The following button will <span>PERMANENTLY DELETE</span> this record.</p>
-        <form method="post">
-            <input type="hidden" name="id" value="<?= $id ?>"/>
-            <input type="hidden" name="state" value="<?= $state ?>"/>
-            <button type="submit" name="submit" value="delete">DELETE</button>
-        </form>
+        <a class="back-button" href="/?state=<?= $state ?>">Back</a>
+    </form>
+    <p>WARNING: The following button will PERMANENTLY DELETE this record.</p>
+    <form method="post">
+        <input type="hidden" name="id" value="<?= $id ?>" />
+        <input type="hidden" name="state" value="<?= $state ?>" />
+        <button type="submit" name="submit" value="delete">DELETE</button>
     </form>
 <?php } ?>

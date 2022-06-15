@@ -11,9 +11,14 @@ body {
 }
 
 h1 {
-    padding-left: 0;
     color: indianred;
     font-size: 5em;
+    margin-bottom: 0;
+}
+
+h2 {
+    color: indianred;
+    font-size: 3em;
 }
 
 input, select {
@@ -79,6 +84,28 @@ button:hover{
     margin-bottom: 0;
 }
 
-tr {
-    margin-bottom: 5vh;
+.entry-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.entry-form > *{
+    margin-bottom: 1vh;
+}
+
+.entry-form > label {
+    margin-bottom: 2px;
+}
+
+.entry-form button {
+    margin-left: 0;
+}
+
+.back-button {
+    text-align: center;
+    font-weight: 400;
+    padding: .5vh .5vw;
+    border-radius: .5em;
 }

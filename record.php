@@ -1,5 +1,6 @@
 <?php
 include('./header.php');
+echo "<h2>Record a Price</h2>";
 $price = trim(htmlspecialchars($_POST['price'] ?? "", ENT_QUOTES));
 $city = trim(htmlspecialchars($_POST['city'] ?? "", ENT_QUOTES));
 $location = trim(htmlspecialchars($_POST['location'] ?? "", ENT_QUOTES));
@@ -60,8 +61,8 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
     }
 }
 ?>
-<h2>Record a Price</h2>
-<form method="post">
+
+<form class="entry-form" method="post">
     <label>Price</label>
     <input type="text" name="price" placeholder="0.00" value="<?= $price ?>" />
     <label>City</label>
@@ -70,6 +71,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
     <input type="text" name="location" placeholder="Location" value="<?= $location ?>" />
     <label>Brand</label>
     <input type="text" name="brand" placeholder="Brand" value="<?= $brand ?>" />
+    <label>State</label>
     <select name="state">
         <option value="">--Select a State--</option>
         <option value="AL" <?= ($state === "AL" ? "selected" : "") ?>>Alabama</option>
@@ -125,5 +127,5 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
         <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
     </select>
     <button type="submit" name="submit" value="record">Submit</button>
-    <a href="/?state=<?= $state ?>">Back</a>
+    <a class="back-button" href="/?state=<?= $state ?>">Back</a>
 </form>
