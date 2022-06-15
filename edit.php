@@ -4,16 +4,6 @@ echo "<h2>Edit a Record</h2>";
 $state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
 if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     $id = trim(htmlspecialchars($_POST['id'] ?? "", ENT_QUOTES));
-    $servername = "127.0.0.1";
-    $username = "root";
-    $password = "password";
-    $dbname = "gas-tracker";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("SQL Connection failed: " . $conn->connect_error);
-    }
 
     $stmt = $conn->prepare("DELETE FROM stations WHERE id = ?;");
     $stmt->bind_param("s", $id);
