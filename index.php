@@ -84,16 +84,6 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
 </div>
 <?php
 if (isset($_GET['state']) && in_array($state, $statesArray)) {
-    $servername = "127.0.0.1";
-    $username = "root";
-    $password = "password";
-    $dbname = "gas-tracker";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("SQL Connection failed: " . $conn->connect_error);
-    }
 
     $filterArray = ["price", "city", "street", "brand"];
 

@@ -55,17 +55,6 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
 
         if ($formComplete) {
 
-            $servername = "127.0.0.1";
-            $username = "root";
-            $password = "password";
-            $dbname = "gas-tracker";
-
-            $conn = new mysqli($servername, $username, $password, $dbname);
-
-            if ($conn->connect_error) {
-                die("SQL Connection failed: " . $conn->connect_error);
-            }
-
             $stmt = $conn->prepare("UPDATE stations SET price = ?, city = ?, street = ?, brand = ?, state = ? WHERE id = ?;");
             $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $id);
             $stmt->execute();
