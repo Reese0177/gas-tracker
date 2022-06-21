@@ -29,5 +29,7 @@ https://gas-tracker-project.herokuapp.com
 
 - PHP
 - MySQL
+- HTML
+- CSS
 
 ---
