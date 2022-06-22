@@ -1,7 +1,7 @@
 
 # Gas Tracker
 
-Gas Tracker shows user-reported gas prices at any station in the user
+Gas Tracker shows user-reported gas prices at any station in the US
 
 ---
 ## Table of Contents
