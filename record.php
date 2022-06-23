@@ -6,6 +6,10 @@ $city = trim(htmlspecialchars($_POST['city'] ?? "", ENT_QUOTES));
 $location = trim(htmlspecialchars($_POST['location'] ?? "", ENT_QUOTES));
 $brand = trim(htmlspecialchars($_POST['brand'] ?? "", ENT_QUOTES));
 $state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
+if (!isset($_SESSION['uid'])) {
+    header('Location: index.php');
+    exit();
+}
 if (isset($_POST['submit']) && $_POST['submit'] === "record") {
     $formComplete = true;
     $errors = [];
@@ -36,8 +40,8 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
         </div>
 <?php
 
-        $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state) VALUES (?, ?, ?, ?, ?);");
-        $stmt->bind_param("sssss", $price, $city, $location, $brand, $state);
+        $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state) VALUES (?, ?, ?, ?, ?, ?);");
+        $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $_SESSION['uid']);
         $stmt->execute();
         $stmt->close();
         $conn->close();
