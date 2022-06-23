@@ -140,6 +140,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     <form method="post">
         <input type="hidden" name="id" value="<?= $id ?>" />
         <input type="hidden" name="state" value="<?= $state ?>" />
+        <input type="hidden" name="cid" value="<?=$cid?>"/>
         <button type="submit" name="submit" value="delete">DELETE</button>
     </form>
 <?php } ?>
