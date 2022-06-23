@@ -40,8 +40,8 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
         </div>
 <?php
 
-        $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state) VALUES (?, ?, ?, ?, ?, ?);");
-        $stmt->bind_param("ssssss", $price, $city, $location, $brand, $state, $_SESSION['uid']);
+        $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state, cid) VALUES (?, ?, ?, ?, ?, ?);");
+        $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $_SESSION['uid']);
         $stmt->execute();
         $stmt->close();
         $conn->close();
