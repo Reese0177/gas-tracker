@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <head>
     <title>Gas Tracker</title>
     <link rel="stylesheet" href="/style.css" />
@@ -23,8 +25,9 @@
 
     <?php } else {
         $username = $_SESSION['username'];
-        $uid = $_SESSION['id'];
+        $uid = $_SESSION['uid'];
         echo "<p class='name'>Welcome, $username!</p>";
+        echo "<a id='logout' href='logout.php'>Log Out</a>";
     }
 
     $servername = "127.0.0.1";
@@ -37,7 +40,6 @@
     if ($conn->connect_error) {
         die("SQL Connection failed: " . $conn->connect_error);
     }
-
     ?>
 
 </header>

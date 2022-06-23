@@ -131,3 +131,7 @@ header {
 #login-links a {
     margin: .5vh 0;
 }
+
+.name, #logout {
+    text-align: center;
+}

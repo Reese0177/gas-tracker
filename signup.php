@@ -57,5 +57,5 @@ if (isset($_POST['submit']) && $_POST['submit'] === "signup") {
     <label>Confirm Password</label>
     <input type="password" name="c-password" placeholder="Confirm Password"/>
     <button type="submit" name="submit" value="signup">Sign Up</button>
-    <a class="button back-button" href="/">Cancel</a>
+    <a class="button back-button" href="/">Back</a>
 </form>
