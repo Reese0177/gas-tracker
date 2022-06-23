@@ -9,10 +9,43 @@ if (isset($_POST['submit']) && $_POST['submit'] === "signup") {
     $errors = [];
     if ($username === "" || strlen($username) > 64) {
         $formComplete = false;
-        array_push($errors, "Please enter a username no greater than 64 characters");
+        array_push($errors, "Please enter a username no greater than 64 characters.");
     } else {
-        
+        $stmt = sprintf(
+            "SELECT * FROM users WHERE username = '%s'",
+            $conn->real_escape_string($username)
+        );
+        $result = $conn->query($stmt);
+        $resultCheck = mysqli_num_rows($result);
+        if ($resultCheck > 0) {
+            $formComplete = false;
+            array_push($errors, "Username already taken. Please choose a new username.");
+        }
     }
+    if ($password === "") {
+        $formComplete = false;
+        array_push($errors, "Please enter a password.");
+    } elseif ($password !== $cpassword) {
+        $formComplete = false;
+        array_push($errors, "Passwords do not match.");
+    }
+
+    if ($formComplete) {
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?);");
+        $stmt->bind_param("ss", $username, $hashed);
+        $stmt->execute();
+        $stmt->close();
+        $conn->close();
+        echo "<div><p>Sign up successful! Please log in to continue.</p></div>";
+    } else {
+        echo "<div class=\"errors\"><ul>";
+        foreach ($errors as $error) {
+            echo "<li>$error</li>";
+        }
+        echo "</ul></div>";
+    }
+
 }
 ?>
 

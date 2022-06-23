@@ -36,17 +36,6 @@ if (isset($_POST['submit']) && $_POST['submit'] === "record") {
         </div>
 <?php
 
-        $servername = "127.0.0.1";
-        $username = "root";
-        $password = "password";
-        $dbname = "gas-tracker";
-
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("SQL Connection failed: " . $conn->connect_error);
-        }
-
         $stmt = $conn->prepare("INSERT INTO stations (price, city, street, brand, state) VALUES (?, ?, ?, ?, ?);");
         $stmt->bind_param("sssss", $price, $city, $location, $brand, $state);
         $stmt->execute();
