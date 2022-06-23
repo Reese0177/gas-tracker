@@ -2,6 +2,11 @@
 include_once('./header.php');
 echo "<h2>Edit a Record</h2>";
 $state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
+$cid = trim(htmlspecialchars($_POST['cid'] ?? "", ENT_QUOTES));
+if (!isset($_SESSION['uid']) || $cid !== $_SESSION['uid']) {
+    header("Location: index.php");
+    exit();
+}
 if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
     $id = trim(htmlspecialchars($_POST['id'] ?? "", ENT_QUOTES));
 
@@ -44,7 +49,6 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
         }
 
         if ($formComplete) {
-
             $stmt = $conn->prepare("UPDATE stations SET price = ?, city = ?, street = ?, brand = ?, state = ? WHERE id = ?;");
             $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $id);
             $stmt->execute();
@@ -128,6 +132,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
             <option value="WI" <?= ($state === "WI" ? "selected" : "") ?>>Wisconsin</option>
             <option value="WY" <?= ($state === "WY" ? "selected" : "") ?>>Wyoming</option>
         </select>
+        <input type="hidden" name="cid" value="<?=$cid?>"/>
         <button type="submit" name="submit" value="update">Submit</button>
         <a class="button back-button" href="/?state=<?= $state ?>">Back</a>
     </form>
