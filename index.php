@@ -74,66 +74,72 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                 <option value="street" <?= ($filter === "street" ? "selected" : "") ?>>Location</option>
                 <option value="brand" <?= ($filter === "brand" ? "selected" : "") ?>>Brand</option>
             </select>
-            <input type="hidden" name="state" value="<?=$state?>"/>
+            <input type="hidden" name="state" value="<?= $state ?>" />
             <button type="submit" name="submit" value="search">Search</button>
         </form>
-    <?php } ?>
-</div>
-<div id="record">
-    <a class="button" href="record.php">Record a Price</a>
-</div>
-<?php
-if (isset($_GET['state']) && in_array($state, $statesArray)) {
-    $servername = "127.0.0.1";
-    $username = "root";
-    $password = "password";
-    $dbname = "gas-tracker";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("SQL Connection failed: " . $conn->connect_error);
+        <?php }
+    echo "</div>";
+    if (isset($username)) {
+        echo "<div id='record'>
+    <a class='button' href='record.php'>Record a Price</a>
+</div>";
     }
 
-    $filterArray = ["price", "city", "street", "brand"];
+    if (isset($_GET['state']) && in_array($state, $statesArray)) {
+        $servername = "127.0.0.1";
+        $username = "root";
+        $password = "password";
+        $dbname = "gas-tracker";
 
-    $stmt = sprintf("SELECT * FROM stations WHERE state = '%s'".(isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? 'AND %s LIKE "%%%s%%"' : ""),
-    $conn->real_escape_string($state), $conn->real_escape_string($filter), $conn->real_escape_string($search));
-    $stations = $conn->query($stmt);
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
-    if (mysqli_num_rows($stations) === 0) {
-        echo "<p>No stations found in $state".(isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? " with $filter of $search":"");
-    } else {
-?>
-        <table>
-            <tr>
-                <th>Price</th>
-                <th>City</th>
-                <th>Location</th>
-                <th>Brand</th>
-            </tr>
-            <?php
-            foreach ($stations as $station) { ?>
-                <tr>
-                    <td><?= $station['price'] ?></td>
-                    <td><?= $station['city'] ?></td>
-                    <td><?= $station['street'] ?></td>
-                    <td><?= $station['brand'] ?></td>
-                    <td class="edit-td">
-                        <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
-                            <input type="hidden" name="price" value="<?= $station['price'] ?>" />
-                            <input type="hidden" name="city" value="<?= $station['city'] ?>" />
-                            <input type="hidden" name="location" value="<?= $station['street'] ?>" />
-                            <input type="hidden" name="brand" value="<?= $station['brand'] ?>" />
-                            <input type="hidden" name="state" value="<?= $station['state'] ?>" />
-                            <button type="submit" name="submit" value="edit">Edit</button>
-                        </form>
-                    </td>
-                </tr>
-    <?php }
-            echo "</table>";
+        if ($conn->connect_error) {
+            die("SQL Connection failed: " . $conn->connect_error);
         }
-        $conn->close();
-    } else {
-        echo "<p>Select a state to view recorded prices.</p>";
-    }
+
+        $filterArray = ["price", "city", "street", "brand"];
+
+        $stmt = sprintf(
+            "SELECT * FROM stations WHERE state = '%s'" . (isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? 'AND %s LIKE "%%%s%%"' : ""),
+            $conn->real_escape_string($state),
+            $conn->real_escape_string($filter),
+            $conn->real_escape_string($search)
+        );
+        $stations = $conn->query($stmt);
+
+        if (mysqli_num_rows($stations) === 0) {
+            echo "<p>No stations found in $state" . (isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? " with $filter of $search" : "");
+        } else {
+        ?>
+            <table>
+                <tr>
+                    <th>Price</th>
+                    <th>City</th>
+                    <th>Location</th>
+                    <th>Brand</th>
+                </tr>
+                <?php
+                foreach ($stations as $station) { ?>
+                    <tr>
+                        <td><?= $station['price'] ?></td>
+                        <td><?= $station['city'] ?></td>
+                        <td><?= $station['street'] ?></td>
+                        <td><?= $station['brand'] ?></td>
+                        <td class="edit-td">
+                            <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
+                                <input type="hidden" name="price" value="<?= $station['price'] ?>" />
+                                <input type="hidden" name="city" value="<?= $station['city'] ?>" />
+                                <input type="hidden" name="location" value="<?= $station['street'] ?>" />
+                                <input type="hidden" name="brand" value="<?= $station['brand'] ?>" />
+                                <input type="hidden" name="state" value="<?= $station['state'] ?>" />
+                                <button type="submit" name="submit" value="edit">Edit</button>
+                            </form>
+                        </td>
+                    </tr>
+        <?php }
+                echo "</table>";
+            }
+            $conn->close();
+        } else {
+            echo "<p>Select a state to view recorded prices.</p>";
+        }
