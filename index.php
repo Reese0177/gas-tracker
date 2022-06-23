@@ -114,7 +114,7 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                         <td><?= $station['city'] ?></td>
                         <td><?= $station['street'] ?></td>
                         <td><?= $station['brand'] ?></td>
-                        <?php if (!isset($_SESSION['uid']) || $station['cid'] === $_SESSION['uid']) {?>
+                        <?php if (isset($_SESSION['uid']) && $station['cid'] === $_SESSION['uid']) {?>
                         <td class="edit-td">
                             <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
                                 <input type="hidden" name="price" value="<?= $station['price'] ?>" />
