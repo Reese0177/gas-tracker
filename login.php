@@ -23,7 +23,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === "login") { //If clicked log 
                     $_SESSION['uid'] = $row['id'];
                     $_SESSION['username'] = $username;
                     $_SESSION['state'] = $row['state'];
-                    echo "<div><p>Log in successful! Welcome, $username!</p></div>";
+                    header('Location: index.php');
                 } else { //If not match, set flag false
                     $formComplete = false;
                 }
