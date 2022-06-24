@@ -23,7 +23,9 @@ https://gas-tracker-project.herokuapp.com
 - Record new prices
 - Edit previous records
 - Delete previous records
+- Sign Up and Log In
 - Only edit and delete records that YOU created
+- Set a home state and view that page by default when logged in
 
 ---
 ## Technologies
