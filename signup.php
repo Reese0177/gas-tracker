@@ -1,51 +1,51 @@
 <?php
 include('./header.php');
 echo "<h2>Sign Up</h2>";
-$username = trim(htmlspecialchars($_POST['username'] ?? "", ENT_QUOTES));
+$username = trim(htmlspecialchars($_POST['username'] ?? "", ENT_QUOTES)); //Escape XSS
 $password = trim(htmlspecialchars($_POST['password'] ?? "", ENT_QUOTES));
 $cpassword = trim(htmlspecialchars($_POST['c-password'] ?? "", ENT_QUOTES));
 $state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
-if (isset($_POST['submit']) && $_POST['submit'] === "signup") {
+if (isset($_POST['submit']) && $_POST['submit'] === "signup") { //If clicked sign up...
     $formComplete = true;
     $errors = [];
-    if ($username === "" || strlen($username) > 64) {
+    if ($username === "" || strlen($username) > 64) { //Make sure username entered
         $formComplete = false;
         array_push($errors, "Please enter a username no greater than 64 characters.");
-    } else {
+    } else { //If username entered...
         $stmt = sprintf(
             "SELECT * FROM users WHERE username = '%s'",
-            $conn->real_escape_string($username)
+            $conn->real_escape_string($username) //Escape SQL injection and make sure username available
         );
         $result = $conn->query($stmt);
         $resultCheck = mysqli_num_rows($result);
-        if ($resultCheck > 0) {
+        if ($resultCheck > 0) { //If username taken, say so
             $formComplete = false;
             array_push($errors, "Username already taken. Please choose a new username.");
         }
     }
-    if ($password === "") {
+    if ($password === "") { //Make sure password entered
         $formComplete = false;
         array_push($errors, "Please enter a password.");
-    } elseif ($password !== $cpassword) {
+    } elseif ($password !== $cpassword) { //Make sure passwords match
         $formComplete = false;
         array_push($errors, "Passwords do not match.");
     }
-    if (!in_array($state, $statesArray)) {
+    if (!in_array($state, $statesArray)) { //Make sure state valid
         $formComplete = false;
         array_push($errors, "Please select a valid state");
     }
 
-    if ($formComplete) {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
+    if ($formComplete) { //If all valid...
+        $hashed = password_hash($password, PASSWORD_DEFAULT); //Hash password
         $stmt = $conn->prepare("INSERT INTO users (username, password, state) VALUES (?, ?, ?);");
         $stmt->bind_param("sss", $username, $hashed, $state);
-        $stmt->execute();
+        $stmt->execute(); //Escape SQL injection and insert user to database
         $stmt->close();
         $conn->close();
         echo "<div><p>Sign up successful! Please log in to continue.</p></div>";
-    } else {
+    } else { //If not all valid...
         echo "<div class=\"errors\"><ul>";
-        foreach ($errors as $error) {
+        foreach ($errors as $error) { //Tell user why
             echo "<li>$error</li>";
         }
         echo "</ul></div>";
@@ -64,7 +64,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === "signup") {
     <label>State</label>
     <select name="state">
         <option value="">--Select a State--</option>
-        <option value="AL" <?= ($state === "AL" ? "selected" : "") ?>>Alabama</option>
+        <option value="AL" <?= ($state === "AL" ? "selected" : "") //Select the previously selected state if available?>>Alabama</option>
         <option value="AK" <?= ($state === "AK" ? "selected" : "") ?>>Alaska</option>
         <option value="AZ" <?= ($state === "AZ" ? "selected" : "") ?>>Arizona</option>
         <option value="AR" <?= ($state === "AR" ? "selected" : "") ?>>Arkansas</option>

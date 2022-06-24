@@ -1,14 +1,15 @@
 <?php
-include('./header.php');
-$state = htmlspecialchars($_GET['state'] ?? '', ENT_QUOTES);
-$search = htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES);
-$filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
+include('./header.php'); //Prevent XSS by escaping special chars
+$state = trim(htmlspecialchars($_GET['state'] ?? '', ENT_QUOTES));
+$search = trim(htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES));
+$filter = trim(htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES));
 ?>
 <div id="searches">
     <form>
         <select name="state">
             <option value="">--Select a State--</option>
-            <option value="AL" <?= ($state === "AL" ? "selected" : "") ?>>Alabama</option>
+            <option value="AL" <?= ($state === "AL" ? "selected" : "") //Select the previously selected state if available 
+                                ?>>Alabama</option>
             <option value="AK" <?= ($state === "AK" ? "selected" : "") ?>>Alaska</option>
             <option value="AZ" <?= ($state === "AZ" ? "selected" : "") ?>>Arizona</option>
             <option value="AR" <?= ($state === "AR" ? "selected" : "") ?>>Arkansas</option>
@@ -63,7 +64,7 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
         <button type="submit">Go</button>
     </form>
     <?php
-    if (isset($_GET['state']) && in_array($state, $statesArray)) {
+    if (isset($_GET['state']) && in_array($state, $statesArray)) { //If state valid...
     ?>
         <form>
             <input type="text" placeholder="Search" name="search" value="<?= $search ?>" />
@@ -77,28 +78,28 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
             <input type="hidden" name="state" value="<?= $state ?>" />
             <button type="submit" name="submit" value="search">Search</button>
         </form>
-        <?php }
+        <?php } //Search box
     echo "</div>";
-    if (isset($username)) {
+    if (isset($username)) { //Show only if logged in
         echo "<div id='record'>
     <a class='button' href='record.php'>Record a Price</a>
 </div>";
     }
 
-    if (isset($_GET['state']) && in_array($state, $statesArray)) {
+    if (isset($_GET['state']) && in_array($state, $statesArray)) { //If state valid...
         $filterArray = ["price", "city", "street", "brand"];
 
         $stmt = sprintf(
             "SELECT * FROM stations WHERE state = '%s'" . (isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? 'AND %s LIKE "%%%s%%"' : ""),
             $conn->real_escape_string($state),
             $conn->real_escape_string($filter),
-            $conn->real_escape_string($search)
+            $conn->real_escape_string($search) //Query db for search, escaping SQL injection
         );
         $result = $conn->query($stmt);
 
-        if (mysqli_num_rows($result) === 0) {
+        if (mysqli_num_rows($result) === 0) { //If no results found with query, say so
             echo "<p>No stations found in $state" . (isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? " with $filter of $search" : "");
-        } else {
+        } else { //If results found, create table of results
         ?>
             <table>
                 <tr>
@@ -116,7 +117,8 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                         <td><?= $station['city'] ?></td>
                         <td><?= $station['street'] ?></td>
                         <td><?= $station['brand'] ?></td>
-                        <?php if (isset($_SESSION['uid']) && $station['cid'] === $_SESSION['uid']) { ?>
+                        <?php if (isset($_SESSION['uid']) && $station['cid'] === $_SESSION['uid']) { //If user is logged in and created this record, show Edit button
+                        ?>
                             <td class="edit-td">
                                 <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
                                     <input type="hidden" name="price" value="<?= $station['price'] ?>" />
@@ -134,11 +136,11 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                 echo "</table>";
             }
             $conn->close();
-        } else {
-            if (isset($_SESSION['state'])) {
+        } else { //If state not valid...
+            if (isset($_SESSION['state'])) { //If the user is logged in, redirect to their home state
                 $state = trim(htmlspecialchars($_SESSION['state']));
                 header("Location: index.php?state=$state");
             } else {
-                echo "<p>Select a state to view recorded prices.</p>";
+                echo "<p>Select a state to view recorded prices.</p>"; //If not logged in, tell them to choose one
             }
         }

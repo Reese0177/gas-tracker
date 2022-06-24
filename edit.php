@@ -1,56 +1,56 @@
 <?php
 include_once('./header.php');
 echo "<h2>Edit a Record</h2>";
-$state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES));
+$state = trim(htmlspecialchars($_POST['state'] ?? "", ENT_QUOTES)); //Escape XSS
 $cid = trim(htmlspecialchars($_POST['cid'] ?? "", ENT_QUOTES));
-if (!isset($_SESSION['uid']) || $cid !== $_SESSION['uid']) {
+if (!isset($_SESSION['uid']) || $cid !== $_SESSION['uid']) { //If user is not logged in or is not the right user, send home
     header("Location: index.php");
     exit();
 }
-if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
-    $id = trim(htmlspecialchars($_POST['id'] ?? "", ENT_QUOTES));
+if (isset($_POST['submit']) && $_POST['submit'] === 'delete') { //If someone clicked delete..
+    $id = trim(htmlspecialchars($_POST['id'] ?? "", ENT_QUOTES)); //Escape XSS
 
-    $stmt = $conn->prepare("DELETE FROM stations WHERE id = ?;");
+    $stmt = $conn->prepare("DELETE FROM stations WHERE id = ?;"); //Escape SQL inject and delete
     $stmt->bind_param("s", $id);
     $stmt->execute();
     $stmt->close();
     $conn->close();
     echo "<p>Deleted!</p><a class='button' href='/index.php?state=$state'>Back</a>";
-} else {
+} else { //If not deleting...
 
-    $price = trim(htmlspecialchars($_POST['price'] ?? "", ENT_QUOTES));
+    $price = trim(htmlspecialchars($_POST['price'] ?? "", ENT_QUOTES)); //Escape XSS
     $city = trim(htmlspecialchars($_POST['city'] ?? "", ENT_QUOTES));
     $location = trim(htmlspecialchars($_POST['location'] ?? "", ENT_QUOTES));
     $brand = trim(htmlspecialchars($_POST['brand'] ?? "", ENT_QUOTES));
     $id = trim(htmlspecialchars($_GET['station'] ?? "", ENT_QUOTES));
 
-    if (isset($_POST['submit']) && $_POST['submit'] === 'update') {
+    if (isset($_POST['submit']) && $_POST['submit'] === 'update') { //If clicked update...
         $formComplete = true;
         $errors = [];
-        if (preg_match('/^\d{1,2}(\.\d{0,2})?$/', $price) === 0) {
+        if (preg_match('/^\d{1,2}(\.\d{0,2})?$/', $price) === 0) { //Make sure price valid
             $formComplete = false;
             array_push($errors, "Please enter a valid price");
         }
-        if ($city === "" || strlen($city) > 20) {
+        if ($city === "" || strlen($city) > 20) { //Make sure city entered
             $formComplete = false;
             array_push($errors, "Please enter a valid city no greater than 20 characters");
         }
-        if ($location === "" || strlen($location) > 50) {
+        if ($location === "" || strlen($location) > 50) { //Make sure location entered
             $formComplete = false;
             array_push($errors, "Please enter a location (e.g. street address or cross streets) no greater than 50 characters");
         }
-        if ($brand === "" || strlen($brand) > 20) {
+        if ($brand === "" || strlen($brand) > 20) { //Make sure brand entered
             $formComplete = false;
             array_push($errors, "Please enter a brand no greater than 20 characters");
         }
-        if (!in_array($state, $statesArray)) {
+        if (!in_array($state, $statesArray)) { //Make sure state valid
             $formComplete = false;
             array_push($errors, "Please select a valid state");
         }
 
-        if ($formComplete) {
+        if ($formComplete) { //If all form data correct...
             $stmt = $conn->prepare("UPDATE stations SET price = ?, city = ?, street = ?, brand = ?, state = ? WHERE id = ?;");
-            $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $id);
+            $stmt->bind_param("sssssd", $price, $city, $location, $brand, $state, $id); //Escape SQL injection and update
             $stmt->execute();
             $stmt->close();
             $conn->close();
@@ -59,7 +59,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
                 <p>Updated!</p>
             </div>
     <?php
-        } else {
+        } else { //If form data not all correct, tell user why
             echo "<div class=\"errors\"><ul>";
             foreach ($errors as $error) {
                 echo "<li>$error</li>";
@@ -80,7 +80,7 @@ if (isset($_POST['submit']) && $_POST['submit'] === 'delete') {
         <input type="text" name="brand" placeholder="Brand" value="<?= $brand ?>" />
         <select name="state">
             <option value="">--Select a State--</option>
-            <option value="AL" <?= ($state === "AL" ? "selected" : "") ?>>Alabama</option>
+            <option value="AL" <?= ($state === "AL" ? "selected" : "") //Select the previously selected state if available?>>Alabama</option>
             <option value="AK" <?= ($state === "AK" ? "selected" : "") ?>>Alaska</option>
             <option value="AZ" <?= ($state === "AZ" ? "selected" : "") ?>>Arizona</option>
             <option value="AR" <?= ($state === "AR" ? "selected" : "") ?>>Arkansas</option>

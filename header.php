@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php session_start(); //Start session?>
 
 <head>
     <title>Gas Tracker</title>
@@ -9,21 +9,21 @@
         <h1><a id="header-link" href="/">Gas Tracker</a></h1>
     </div>
     <?php
-    $statesArray = [
+    $statesArray = [ //Array of states to use for validation
         'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI',
         'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
         'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
         'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
     ];
 
-    if (!isset($_SESSION['username'])) { ?>
+    if (!isset($_SESSION['username'])) { //If user not logged in, show log in/sign up links?>
         <div id="login-links">
             <a href="signup.php" class='button'>Sign Up</a>
             <a href='login.php' class='button'>Log In</a>
         </div>
 
 
-    <?php } else {
+    <?php } else { //If logged in, show their username and logout link
         $username = $_SESSION['username'];
         $uid = $_SESSION['uid'];
         echo "<p class='name'>Welcome, $username!</p>";
