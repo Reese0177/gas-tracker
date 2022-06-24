@@ -94,9 +94,9 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
             $conn->real_escape_string($filter),
             $conn->real_escape_string($search)
         );
-        $stations = $conn->query($stmt);
+        $result = $conn->query($stmt);
 
-        if (mysqli_num_rows($stations) === 0) {
+        if (mysqli_num_rows($result) === 0) {
             echo "<p>No stations found in $state" . (isset($_GET['search']) && isset($_GET['filter']) && in_array($filter, $filterArray) ? " with $filter of $search" : "");
         } else {
         ?>
@@ -108,7 +108,9 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                     <th>Brand</th>
                 </tr>
                 <?php
-                foreach ($stations as $station) { ?>
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $reversed = array_reverse($rows);
+                foreach ($reversed as $station) { ?>
                     <tr>
                         <td><?= $station['price'] ?></td>
                         <td><?= $station['city'] ?></td>
