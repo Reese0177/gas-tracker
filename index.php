@@ -116,18 +116,18 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
                         <td><?= $station['city'] ?></td>
                         <td><?= $station['street'] ?></td>
                         <td><?= $station['brand'] ?></td>
-                        <?php if (isset($_SESSION['uid']) && $station['cid'] === $_SESSION['uid']) {?>
-                        <td class="edit-td">
-                            <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
-                                <input type="hidden" name="price" value="<?= $station['price'] ?>" />
-                                <input type="hidden" name="city" value="<?= $station['city'] ?>" />
-                                <input type="hidden" name="location" value="<?= $station['street'] ?>" />
-                                <input type="hidden" name="brand" value="<?= $station['brand'] ?>" />
-                                <input type="hidden" name="state" value="<?= $station['state'] ?>" />
-                                <input type="hidden" name="cid" value="<?= $station['cid'] ?>" />
-                                <button type="submit" name="submit" value="edit">Edit</button>
-                            </form>
-                        </td>
+                        <?php if (isset($_SESSION['uid']) && $station['cid'] === $_SESSION['uid']) { ?>
+                            <td class="edit-td">
+                                <form method="post" action="/edit.php?station=<?= $station['id'] ?>">
+                                    <input type="hidden" name="price" value="<?= $station['price'] ?>" />
+                                    <input type="hidden" name="city" value="<?= $station['city'] ?>" />
+                                    <input type="hidden" name="location" value="<?= $station['street'] ?>" />
+                                    <input type="hidden" name="brand" value="<?= $station['brand'] ?>" />
+                                    <input type="hidden" name="state" value="<?= $station['state'] ?>" />
+                                    <input type="hidden" name="cid" value="<?= $station['cid'] ?>" />
+                                    <button type="submit" name="submit" value="edit">Edit</button>
+                                </form>
+                            </td>
                         <?php } ?>
                     </tr>
         <?php }
@@ -135,5 +135,10 @@ $filter = htmlspecialchars($_GET['filter'] ?? '', ENT_QUOTES);
             }
             $conn->close();
         } else {
-            echo "<p>Select a state to view recorded prices.</p>";
+            if (isset($_SESSION['state'])) {
+                $state = trim(htmlspecialchars($_SESSION['state']));
+                header("Location: index.php?state=$state");
+            } else {
+                echo "<p>Select a state to view recorded prices.</p>";
+            }
         }
